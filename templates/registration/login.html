@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+
+{% block container %}
+
+<div class="limiter mt-2">
+  <div class="container-login100">
+    <p>&nbsp;</p>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6 text-center">
+            <img class="img-fluid" src="{% static 'site/logos/CompanyLogoLoginout.svg' %}" /> 
+            <!-- <h1 class="display-1" style="color:#D6FB0F;">Let's go electric</h1> -->
+        </div>
+        <div class="col-3"></div>
+    </div>
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <form method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          {% if form.errors %}
+          <div class="alert alert-warning fade show" role="alert">
+              Your <strong>username</strong> and <strong>password</strong> did not match
+          </div>
+          {% endif %}
+          {% if messages %}
+          <div>
+              <ul class="messages">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+          </div>
+          {% endif %}
+          <div class="form-group">
+            <label for="id_username">{% trans "Email" %}</label>
+            <input type="text" name="username" autocomplete="username" required class="form-control" id="id_username" aria-describedby="usernameHelp" placeholder="Enter your email">
+            <!-- <small id="usernameHelp" class="form-text text-muted">We'll never share your username with anyone else.</small> -->
+          </div>
+          <div class="form-group">
+            <label for="id_password">Password</label>
+            <input type="password" name="password" autocomplete="current-password" required class="form-control" id="id_password" placeholder="Password">
+          </div>
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="btn btn-primary col-12 mt-2">Log-in</button>
+        </form>
+      </div>
+      <div class="col-4"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock container %}

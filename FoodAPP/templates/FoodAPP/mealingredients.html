@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% for pos in positions %}
+<tr id="pos-{{ pos.pk }}" class="pos-row">
+  <td>{{ pos.meal.get_type_display }}</td>
+  <td>{{ pos.ingredient }}</td>
+  <td>{{ pos.quantity }}</td>
+  <td>
+    <button class="btn btn-primary btn-sm" hx-get="{% url 'FoodAPP_editIngredient' pk=pos.pk %}" hx-target="#dialog">{% trans "Editar" %}</button>
+    <button class="btn btn-light btn-sm" hx-post="{% url 'FoodAPP_removeIngredient' pk=pos.pk %}" hx-target="this">{% trans "Borrar" %}</button>
+  </td>
+</tr>
+{% endfor %}

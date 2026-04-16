@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load tz %}
+
+{% block container %}
+<!-- Masthead-->
+<header class="masthead" style="background-image: url({% static 'img/main_picture.jpg' %});">
+    <div class="container">
+        <div class="masthead-subheading">Bienvenido a tu calculadora de nutricion!</div>
+        <div class="masthead-heading text-uppercase">Me encanta que estés aquí</div>
+        <div class="masthead-subheading">Esto quiere decir que sigues contando conmigo para lo que sea que me uses.</div>
+        <a class="btn btn-primary btn-xl text-uppercase" href="#services">Quiero saber más</a>
+    </div>
+</header>
+
+<!-- Servicios-->
+{% include '_services_section.html' %}
+
+{% comment %} <!-- Matriz de productos-->
+{% include '_products_section.html' %}
+
+<!-- History-->
+{% include '_history_section.html' %}
+
+<!-- El equipo-->
+{% include '_team_section.html' %} {% endcomment %}
+
+<!-- Contact-->
+{% include '_contact_section.html' %}
+
+{% endblock container %}
+        

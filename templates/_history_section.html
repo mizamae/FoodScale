@@ -1,0 +1,75 @@
+<section class="page-section" id="history">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Historia</h2>
+            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        </div>
+        <ul class="timeline">
+            {% for item in timeline %}
+                {% if item.order|divisibleby:"2" %}
+                <li>
+                {% else %}
+                <li class="timeline-inverted">
+                {% endif %}
+                    <div class="timeline-image">
+                        {% comment %} <img class="rounded-circle img-fluid" src="" alt="..." /> {% endcomment %}
+                        <span class="fa-stack fa-4x">
+                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                            <i class="fa {{ item.icon }} fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4>{{ item.date }}</h4>
+                            <h4 class="subheading">{{ item.title }}</h4>
+                        </div>
+                        <div class="timeline-body"><p class="text-muted">{{ item.description }}</p></div>
+                    </div>
+                </li>
+            {% endfor %}
+            <li>
+                <div class="timeline-image">
+                    {% comment %} <img class="rounded-circle img-fluid" src="" alt="..." /> {% endcomment %}
+                    <span class="fa-stack fa-4x">
+                        <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-play fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4>2024 - 2025</h4>
+                        <h4 class="subheading">Primeros pasos</h4>
+                    </div>
+                    <div class="timeline-body"><p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p></div>
+                </div>
+            </li>
+            <li class="timeline-inverted">
+                <div class="timeline-image">
+                    {% comment %} <img class="rounded-circle img-fluid" src="" alt="..." /> {% endcomment %}
+                    <span class="fa-stack fa-4x">
+                        <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-calendar-days fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4>Septiembre 2025</h4>
+                        <h4 class="subheading">Nuestro primer hito</h4>
+                    </div>
+                    <div class="timeline-body"><p class="text-muted">Los comienzos nunca fueron fáciles, pero en Septiembre de 2025 conseguimos nuestro primer hito reseñable.</p></div>
+                </div>
+            </li>
+            <li>
+                <div class="timeline-image">
+                    <h4>
+                        Esto sólo
+                        <br />
+                        es el comienzo
+                        <br />
+                        Despegamos!
+                    </h4>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>

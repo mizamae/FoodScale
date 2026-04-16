@@ -1,0 +1,29 @@
+from django.urls import path, register_converter
+from . import views
+
+# Source - https://stackoverflow.com/a/48868140
+# Posted by neverwalkaloner, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-04-16, License - CC BY-SA 3.0
+
+class NegativeIntConverter:
+    regex = '-?\d+'
+
+    def to_python(self, value):
+        return int(value)
+
+    def to_url(self, value):
+        return '%d' % value
+
+register_converter(NegativeIntConverter, 'negint')
+
+urlpatterns = [
+    path("calculator/<negint:dayOffset>", views.calculator, name="FoodAPP_calculator"),
+    # path("createmeal/", views.createMeal, name="FoodAPP_createMeal"),
+    path("meal/<negint:dayOffset>", views.viewDayMeals, name="FoodAPP_viewDayMeals"),
+    path("meal/nutrients/<negint:dayOffset>", views.viewDayNutrients, name="FoodAPP_viewDayNutrients"),
+    path("meal/nutrients/graph/<negint:dayOffset>", views.viewDayNutrientsGraph, name="FoodAPP_graphDayNutrients"),
+    path("meal/addingredient/<negint:dayOffset>", views.addIngredient, name="FoodAPP_addIngredient"),
+    path("meal/removeingredient/<int:pk>", views.removeIngredient, name="FoodAPP_removeIngredient"),
+    path("meal/editingredient/<int:pk>", views.editIngredient, name="FoodAPP_editIngredient"),
+    
+]

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block container %}
+
+<div class="container">
+  <div class="row">
+    <br>
+    <br>
+  </div>
+  <div class="row">
+    <div class="px-5 my-5 text-center col-3">
+      <a type="button" class="btn btn-secondary" href="{% url 'FoodAPP_calculator' dayOffset=dayOffset|add:'-1' %}">
+          <i class="fas fa-angle-left"></i>
+      </a>
+    </div>
+    <div class="px-5 my-5 text-center col-6">
+      <h3>{{ day }}</h3>
+    </div>
+    <div class="px-5 my-5 text-center col-3">
+      <a type="button" class="btn btn-secondary" href="{% url 'FoodAPP_calculator' dayOffset=dayOffset|add:'1' %}">
+          <i class="fas fa-angle-right"></i>
+      </a>
+    </div>
+  </div>
+
+    <div class="d-flex justify-content-center">
+      <button hx-get="{% url 'FoodAPP_addIngredient' dayOffset=dayOffset %}" hx-target="#dialog" class="btn btn-primary ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+          <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+        </svg>
+      </button>
+    </div>
+    
+
+    <h5>{% trans "Ingesta total" %}</h5>    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{% trans "Tipo de comida" %}</th>
+          <th>{% trans "Descripcion" %}</th>
+          <th>{% trans "Cantidad" %}</th>
+        </tr>
+      </thead>
+
+      <!-- load ingredients list with HTMX -->
+      <tbody hx-trigger="load, ingredientListChanged from:body" hx-get="{% url 'FoodAPP_viewDayMeals' dayOffset=dayOffset %}" hx-target="this">
+        <tr>
+          <td class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <div class="row">
+      <div class="w-100 d-none d-md-block"></div>
+      <div class="col-12 col-md-6">
+        <h5>{% trans "Desglose de nutrientes" %}</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans "Tipo de nutriente" %}</th>
+              <th>{% trans "Cantidad" %}</th>
+            </tr>
+          </thead>
+
+          <!-- load nutrition parameters list with HTMX -->
+          <tbody hx-trigger="load, ingredientListChanged from:body" hx-get="{% url 'FoodAPP_viewDayNutrients' dayOffset=dayOffset %}" hx-target="this">
+            <tr>
+              <td class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <div class="col-12 col-md-6">
+        <h5>{% trans "Grafica" %}</h5>
+        <div hx-trigger="load, ingredientListChanged from:body" hx-get="{% url 'FoodAPP_graphDayNutrients' dayOffset=dayOffset %}" hx-target="this">
+              <div class="spinner-border" role="status" >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder for the modal -->
+  <div id="modal" class="modal fade">
+    <div id="dialog" class="modal-dialog" hx-target="this"></div>
+  </div>
+
+  <!-- Empty toast to show the message -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+    ; (function () {
+      const modal = new bootstrap.Modal(document.getElementById("modal"))
+
+      htmx.on("htmx:afterSwap", (e) => {
+        // Response targeting #dialog => show the modal
+        if (e.detail.target.id == "dialog") {
+          modal.show()
+        }
+      })
+
+      htmx.on("htmx:beforeSwap", (e) => {
+        // Empty response targeting #dialog => hide the modal
+        if (e.detail.target.id == "dialog" && !e.detail.xhr.response) {
+          modal.hide()
+          e.detail.shouldSwap = false
+        }
+      })
+
+      // Remove dialog content after hiding
+      htmx.on("hidden.bs.modal", () => {
+        document.getElementById("dialog").innerHTML = ""
+      })
+    })()
+  </script>
+  <script>
+      ; (function () {
+        const toastElement = document.getElementById("toast")
+        const toastBody = document.getElementById("toast-body")
+        const toast = new bootstrap.Toast(toastElement, { delay: 2000 })
+
+        htmx.on("showMessage", (e) => {
+          toastBody.innerText = e.detail.value
+          toast.show()
+        })
+      })()
+  </script>
+</div>
+{% endblock container %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    {% load i18n %}
+    {% load tz %}
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Consigue todo lo que necesitas para tu pequeño amigo. Abierto de lunes a viernes, de 8:00 a 17:00, en el Distrito de la moda." />
+        <meta name="author" content="Mikel Zabaleta" />
+        <title>{% include '_brandname.html' %} - Tu web de confianza</title>
+        <!-- Favicon-->
+        <link rel="shortcut icon" type="image/ico" href="{% static 'logos/favicon.ico' %}" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700?display=swap" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700?display=swap" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lfas3IrAAAAAFocwk6siWQEVSpzj_lLmmRzKGrF"></script>
+
+        <!-- Scripts: Bootstraps, HTMX, and custom JavaScript -->
+        <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/htmx.min.js' %}"></script>
+        {% comment %} <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script> {% endcomment %}
+
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-shrink fixed-top" id="mainNav">
+            <div class="container">
+                {% comment %} <a class="navbar-brand" href="#page-top"><img src="{% static 'logos/navbar-logo.svg' %}" alt="..." /></a> {% endcomment %}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ms-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/">{% trans "Home" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/#services">{% trans "Funcionalidades" %}</a></li>
+                        {% comment %} <li class="nav-item"><a class="nav-link" href="#products">Productos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#history">Historia</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#team">El equipo</a></li> {% endcomment %}
+                        <li class="nav-item"><a class="nav-link" href="/#contact">{% trans "Contacto" %}</a></li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle nav-link" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {% if user.get_full_name %}
+                                            {{ user.get_full_name|truncatechars:20 }}
+                                        {% else %}
+                                            {{ user.get_username|truncatechars:20 }}
+                                        {% endif %}
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'myplace' %}">{% trans "Mi sitio" %}</a>
+                                    <a class="dropdown-item" href="{% url 'change_password' %}">{% trans "Cambiar contraseña" %}</a>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Logout</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Login" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Registrate" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        {% block container %}
+
+        
+        {% endblock container %}
+
+
+        <!-- Footer-->
+        <footer class="footer py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 text-lg-start">Copyright &copy; {% include "_brandname.html" %} {% now 'Y' %}</div>
+                    <div class="col-lg-4 my-3 my-lg-0">
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a class="link-dark text-decoration-none me-3" href="#!">Privacy Policy</a>
+                        <a class="link-dark text-decoration-none" href="#!">Terms of Use</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+
+        {% if messages %}
+        <script>
+            setTimeout(
+                function () {
+                    container = document.getElementById("messages_container");
+                    if (container){container.style.display = "none";}
+                },
+                3000 // time in milliseconds
+            );
+        </script>
+        {% endif %}
+
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>
