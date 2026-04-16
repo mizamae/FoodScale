@@ -252,11 +252,15 @@ class Meal(models.Model):
             df1 = df1.sort_values(by='fraction',ascending=False)
             fig = make_subplots(rows=1,specs=[[{"secondary_y": False}]])
             fig.update_yaxes(title_text=str(_("Distribucion de nutrientes")), secondary_y=False)
-            fig.add_trace(go.Bar(x=df1.name.values, y=df1.fraction.values,name=str(_("Distribucion de nutrientes")),offsetgroup=1),secondary_y=False,)
+            fig.add_trace(go.Bar(x=df1.name.values, y=df1.fraction.values,
+                                 text=df1.fraction.values,textposition='auto',
+                                 name=str(_("Distribucion de nutrientes")),offsetgroup=1),secondary_y=False,)
+            fig.update_traces(texttemplate='%{text:.2s}%')
             fig.update_layout(
                 barmode='group',
                 bargap=0.0, # gap between bars of adjacent location coordinates.
                 bargroupgap=0, # gap between bars of the same location coordinate.
+                margin=dict(l=20, r=20, t=20, b=20),
                 )
             return plot({'data': fig}, output_type='div')
         else:
