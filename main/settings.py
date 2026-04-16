@@ -64,6 +64,7 @@ RECAPTCHA_REQUIRED_SCORE = 0.85
 LOGIN_URL='login'
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
+SEC2LOGOUT=5*60
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -155,7 +156,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
-    'main.middleware.SettingsInjectionMiddleware',
     'main.middleware.SessionTimeoutMiddleware',
 ]
 

@@ -22,6 +22,7 @@ class User(AbstractUser):
 
     is_vip = models.BooleanField(default=False)
 
+    data = models.JSONField(blank=True,null=True)
     
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -38,6 +39,17 @@ class User(AbstractUser):
     def save(self,*args,**kwargs):
         super().save(*args,**kwargs)
     
+    def registerWeight(self,value,dateTime=None):
+        if dateTime is None:
+            dateTime = timezone.now().replace(microsecond=0)
+        else:
+            dateTime = dateTime.replace(microsecond=0)
+        register = {'timestamp':dateTime.isoformat(),'value':value}
+        if self.data is None:
+            self.data={'weight':[]}
+        self.data['weight'].append(register)
+        self.save(update_fields=['data',])
+
     @property
     def confirmationLink(self):
         if not self.is_active:

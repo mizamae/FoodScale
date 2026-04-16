@@ -1,20 +1,11 @@
-from django.urls import path, register_converter
+from django.urls import path
 from . import views
 
 # Source - https://stackoverflow.com/a/48868140
 # Posted by neverwalkaloner, modified by community. See post 'Timeline' for change history
 # Retrieved 2026-04-16, License - CC BY-SA 3.0
 
-class NegativeIntConverter:
-    regex = '-?\d+'
 
-    def to_python(self, value):
-        return int(value)
-
-    def to_url(self, value):
-        return '%d' % value
-
-register_converter(NegativeIntConverter, 'negint')
 
 urlpatterns = [
     path("calculator/<negint:dayOffset>", views.calculator, name="FoodAPP_calculator"),

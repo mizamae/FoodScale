@@ -152,7 +152,7 @@ class Meal(models.Model):
     TYPE_LUNCH = 2
     TYPE_AFTERLUNCH = 3
     TYPE_DINNER = 4
-    TYPE_AFTERDINNER = 4
+    TYPE_AFTERDINNER = 5
     MEAL_TYPES = (
         (TYPE_BREAKFAST, _("Desayuno")),
         (TYPE_BRUNCH, _("Almuerzo")),
@@ -165,7 +165,7 @@ class Meal(models.Model):
                                             help_text=_("Determina el tipo de comida en el dia"))
     components = models.ManyToManyField('Ingredient',blank=True,through='CombinationPosition')
 
-    dateTime = models.DateTimeField(verbose_name=_("Date and time"),auto_now_add=True)
+    dateTime = models.DateTimeField(verbose_name=_("Date and time"))
     owner = models.ForeignKey(User,on_delete=models.CASCADE,editable = False)
 
     @property

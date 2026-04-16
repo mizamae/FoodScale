@@ -25,6 +25,7 @@ class CombinationPositionInTable(ModelForm):
         fields = ["quantity","ingredient"]
     
     def __init__(self, *args, **kwargs):
+        editing = kwargs.pop('editing',False)
         super(CombinationPositionInTable, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.label_class = FORMS_LABEL_CLASS
@@ -32,7 +33,10 @@ class CombinationPositionInTable(ModelForm):
         self.helper.form_class = 'form-inline'
         self.helper.form_method = 'post'
         self.helper.form_show_labels = False
-        #self.fields['ingredient'].queryset = Ingredient.objects.all().order_by('name')
+        self.fields['ingredient'].disabled = editing
+        self.fields['mealType'].disabled = editing
+        self.fields['ingredient'].required = not editing
+        self.fields['mealType'].required = not editing
         for field in self.fields:
             help_text = self.fields[field].help_text
             self.fields[field].help_text = None

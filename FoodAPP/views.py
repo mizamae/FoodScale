@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.utils import timezone
 import datetime
 from .forms import CombinationPositionFormSet, CombinationPositionInlineForm, CombinationPositionInTable
 from .models import Meal, CombinationPosition
@@ -29,7 +30,11 @@ def addIngredient(request,dayOffset):
             mealType = int(form.cleaned_data.get('mealType'))
             ingredient = form.cleaned_data.get('ingredient')
             quantity = form.cleaned_data.get('quantity')
-            meal,_ = Meal.objects.get_or_create(dateTime__date=day,type=mealType,owner=request.user)
+            try:
+                meal = Meal.objects.get(dateTime__date=day,type=mealType,owner=request.user)
+            except Meal.DoesNotExist:
+                MyTime = timezone.now().time().replace(microsecond=0)
+                meal = Meal.objects.create(dateTime=datetime.datetime.combine(day, MyTime),type=mealType,owner=request.user)
             meal.appendIngredient(quantity=quantity,ingredient=ingredient)
             return HttpResponse(
                 status=204,
@@ -75,10 +80,11 @@ def viewDayNutrientsGraph(request,dayOffset):
 def editIngredient(request,pk):
     pos = CombinationPosition.objects.get(pk=pk)
     if request.method == "POST":
-        form = CombinationPositionInTable(request.POST)
+        form = CombinationPositionInTable(request.POST,**{'editing':True})
         if form.is_valid():
-            quantity = form.cleaned_data.get('quantity')
-            pos.updateQuantity(newQuantity=quantity)
+            if 'quantity' in form.changed_data:
+                quantity = form.cleaned_data.get('quantity')
+                pos.updateQuantity(newQuantity=quantity)
             return HttpResponse(
                 status=204,
                 headers={
@@ -93,7 +99,7 @@ def editIngredient(request,pk):
             })
     else:
         
-        form = CombinationPositionInTable(instance=pos)
+        form = CombinationPositionInTable(instance=pos,**{'editing':True})
         return render(request, 'FoodAPP/ingredientForm.html', {
             'form': form,
         })

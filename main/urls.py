@@ -15,18 +15,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, register_converter
 
 from . import views
+
+class NegativeIntConverter:
+    regex = '-?\d+'
+
+    def to_python(self, value):
+        return int(value)
+
+    def to_url(self, value):
+        return '%d' % value
+
+register_converter(NegativeIntConverter, 'negint')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.home , name="home"),
-    path("myplace/", views.myplace , name="myplace"),
-    path("sitesettings", views.siteSettings , name="siteSettings"),
-    path("change_password/", views.change_password , name="change_password"),
     path('contactus/', views.contact , name="contactForm"),
     path("accounts/", include("django.contrib.auth.urls")),
-
+    path("userapp/", include("UsersAPP.urls")),
     path("foodapp/", include("FoodAPP.urls")),
 ]
