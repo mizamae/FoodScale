@@ -30,11 +30,12 @@ class NegativeIntConverter:
 
 register_converter(NegativeIntConverter, 'negint')
 
+APP_NAME = 'foodscale'
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", views.home , name="home"),
-    path('contactus/', views.contact , name="contactForm"),
-    path("accounts/", include("django.contrib.auth.urls")),
-    path("userapp/", include("UsersAPP.urls")),
-    path("foodapp/", include("FoodAPP.urls")),
+    path(APP_NAME+'/admin/', admin.site.urls),
+    path(APP_NAME+"/", views.home , name="home"),
+    path(APP_NAME+'/contactus/', views.contact , name="contactForm"),
+    path(APP_NAME+"/accounts/", include("django.contrib.auth.urls")),
+    path(APP_NAME+"/userapp/", include("UsersAPP.urls")),
+    path(APP_NAME+"/foodapp/", include("FoodAPP.urls")),
 ]
