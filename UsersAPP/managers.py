@@ -1,16 +1,16 @@
-from django.contrib.auth.models import UserManager
+from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 import uuid
 
 import logging
 logger = logging.getLogger("users")
 
-class CustomUserManager(UserManager):
+class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
     """
-    def create_user(self,username=None, email=None, password=None, **extra_fields):
+    def create_user(self,email, password=None, **extra_fields):
         """
         Create and save a user with the given email and password.
         """
@@ -18,8 +18,7 @@ class CustomUserManager(UserManager):
 
         if email is None:
             raise ValueError('User must have an email address')
-        if password is None or password=='':
-            raise ValueError('User must have a not empty password')
+        
         
         try:
             
@@ -27,8 +26,12 @@ class CustomUserManager(UserManager):
             email = self.normalize_email(email)
             id = uuid.uuid4() 
             
-            user = self.model(email=email, first_name=extra_fields.get('first_name',None), last_name=extra_fields.get('last_name',None), user_uuid=id,**extra_fields)
-
+            if password is None:
+                password = extra_fields['password1']
+            extra_fields.pop("password1")
+            extra_fields.pop("password2")
+            user = self.model(email=email, user_uuid=id,**extra_fields)
+            
             user.set_password(password)
 
             user.save()
@@ -49,4 +52,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_active", True)
 
+        if extra_fields['password'] is None or extra_fields['password']=='':
+            raise ValueError('Superuser must have a not empty password')
+        
         return self.create_user(**extra_fields)

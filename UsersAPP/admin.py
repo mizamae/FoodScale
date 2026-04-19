@@ -23,6 +23,7 @@ class UserAdmin(BaseUserAdmin):
 
     model = User
 
+    filter_horizontal = ()
     list_display = ("email",)
     ordering = ('email',)
 
@@ -41,7 +42,7 @@ class UserAdmin(BaseUserAdmin):
         ('Permissions', {
             'fields': (
                 'is_active', 'is_staff', 'is_superuser',
-                'groups', 'user_permissions'
+                'groups'
                 )
         }),
         ('Important dates', {

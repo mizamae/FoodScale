@@ -57,7 +57,7 @@ def addIngredient(request,dayOffset):
 @login_required
 def viewDayMeals(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
-    meals = Meal.objects.filter(dateTime__date=day,owner = request.user).order_by("dateTime")
+    meals = Meal.objects.filter(dateTime__date=day,owner = request.user).order_by("type")
     positions=[]
     for meal in meals:
         positions+=list(meal.ingredients)
@@ -90,7 +90,7 @@ def editIngredient(request,pk):
                 headers={
                     'HX-Trigger': json.dumps({
                         "ingredientListChanged": None,
-                        "showMessage": f"{pos.ingredient.name} modificado."
+                        "showMessage": f"Cantidad de {pos.ingredient.name} modificada."
                     })
                 })
         else:

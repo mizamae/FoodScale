@@ -1,0 +1,15 @@
+[Unit]
+Description=celery worker daemon for FoodScale
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+Restart=always
+RestartSec=10
+WorkingDirectory=/root/FoodScale/
+ExecStart= /root/FoodScale/env/bin/celery --app FoodScale worker -l info --pool solo
+
+
+[Install]
+WantedBy=multi-user.target

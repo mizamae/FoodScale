@@ -1,29 +1,30 @@
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import uuid
 from .managers import CustomUserManager
 
-CONFIRMATION_URL = "https://"+settings.PAGE_DNS+"/users/firstlogin/"
+CONFIRMATION_URL = "https://"+settings.PAGE_DNS+"/userapp/firstlogin/"
 
-class User(AbstractUser):
+class User(AbstractBaseUser):
 
     user_uuid = models.UUIDField(default=uuid.uuid4, editable=False, blank=True,null=True)
 
     first_name = models.CharField(_("Nombre"), max_length=150, blank=True,null=True)
     last_name = models.CharField(_("Apellido"), max_length=150, blank=True,null=True)
-    email = models.EmailField(_("Email"), unique=True)
-
-    # products = models.ManyToManyField('ProductsAPP.Product',related_name="users",verbose_name=_("Products enabled"),blank=True)
-    # apps = models.ManyToManyField('ExternalAPPs.ExternalAPP',related_name="users",verbose_name=_("Apps enabled"),blank=True)
+    email = models.EmailField(_("Email"), unique=True,max_length=255,)
 
     is_vip = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     data = models.JSONField(blank=True,null=True)
     
+    groups = models.ManyToManyField(Group)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -61,10 +62,20 @@ class User(AbstractUser):
         else:
             return self.get_username()
         
-    def validate(self):
+    def activate(self):
         #self.set_password(password)
-        self.validate = True
-        self.save(update_fields=['validate',])
+        self.is_active = True
+        self.save(update_fields=['is_active',])
+    
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
     
                     
 

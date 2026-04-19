@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block container %}
+<div class='container'>
+    
+    <header class="masthead" style="background-image: url({% static 'img/main_picture.jpg' %});">
+    <div class="container">
+        <div class="masthead-subheading">{% trans "Acabas de registrarte. Te hemos enviado un correo al email proporcionado con un link que deberás clickar para activar tu cuenta" %}</div>
+
+        <a class="btn btn-primary btn-xl text-uppercase" href="{% url 'login' %}">{% trans "Ya lo he hecho!" %}</a>
+    </div>
+</header>
+
+</div>
+
+{% endblock container %}

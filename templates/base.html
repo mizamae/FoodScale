@@ -7,9 +7,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Consigue todo lo que necesitas para tu pequeño amigo. Abierto de lunes a viernes, de 8:00 a 17:00, en el Distrito de la moda." />
+        <meta name="description" content="Aplicacion para el seguimiento de las ingestas diarias y mas metricas de salud" />
         <meta name="author" content="Mikel Zabaleta" />
-        <title>{% include '_brandname.html' %} - Tu web de confianza</title>
+        <title>{% include '_brandname.html' %} - Tus datos, tuyos</title>
         <!-- Favicon-->
         <link rel="shortcut icon" type="image/ico" href="{% static 'logos/favicon.ico' %}" />
         <!-- Font Awesome icons (free version)-->
@@ -25,7 +25,7 @@
         <!-- Scripts: Bootstraps, HTMX, and custom JavaScript -->
         <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/htmx.min.js' %}"></script>
-        {% comment %} <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script> {% endcomment %}
+    
 
     </head>
     <body id="page-top">
@@ -67,18 +67,46 @@
                         </li>
                         {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Login" %}</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Registrate" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'UsersAPP_signUp' %}">{% trans "Registrate" %}</a></li>
                         {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
         
+        <div class="row">
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+
+        <div class="container align-items-stretch mb-5 text-center" id="messages_container" style="display: none;">
+            {% if messages %}
+                {% for message in messages %}
+                <h4>{{ message }}</h4>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Empty toast to show the message -->
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-body" class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+            </div>
+            </div>
+        </div>
+        
         {% block container %}
 
         
         {% endblock container %}
 
+        
 
         <!-- Footer-->
         <footer class="footer py-4">
@@ -101,6 +129,9 @@
 
         {% if messages %}
         <script>
+            container = document.getElementById("messages_container");
+            if (container){container.style.display = "";}
+
             setTimeout(
                 function () {
                     container = document.getElementById("messages_container");

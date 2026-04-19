@@ -1,0 +1,15 @@
+[Unit]
+Description=gunicorn daemon for FoodScale
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+Restart=always
+RestartSec=5
+WorkingDirectory=/root/FoodScale
+ExecStart= /root/FoodScale/env/bin/gunicorn --access-logfile - --error-logfile /root/FoodScale/logs/gunicorn-error.log --timeout 60 --workers 2 --preload --bind unix:/root/FoodScale/run/app.sock FoodScale.wsgi:application
+
+
+[Install]
+WantedBy=multi-user.target

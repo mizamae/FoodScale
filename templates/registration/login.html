@@ -27,15 +27,7 @@
               Your <strong>username</strong> and <strong>password</strong> did not match
           </div>
           {% endif %}
-          {% if messages %}
-          <div>
-              <ul class="messages">
-                  {% for message in messages %}
-                  <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                  {% endfor %}
-              </ul>
-          </div>
-          {% endif %}
+          
           <div class="form-group">
             <label for="id_username">{% trans "Email" %}</label>
             <input type="text" name="username" autocomplete="username" required class="form-control" id="id_username" aria-describedby="usernameHelp" placeholder="Enter your email">
