@@ -17,7 +17,7 @@ from os import mkdir
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 import environ
 # Use 12factor inspired environment variables or from a file
@@ -64,7 +64,7 @@ RECAPTCHA_REQUIRED_SCORE = 0.85
 LOGIN_URL='login'
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
-SEC2LOGOUT=5*60
+SEC2LOGOUT=15*60
 
 INTERNAL_IPS = [
     "127.0.0.1",
