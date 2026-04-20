@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block container %}
+
+<div class="container">
+    <div class="row">
+
+    <div class="row d-flex px-5 my-5 text-center col-12">
+        <h3>{% trans "Política de privacidad" %}</h3>
+    </div>
+
+    </div>
+
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "1. Responsable del tratamiento" %}</h5>
+        <p>
+            El responsable del tratamiento de los datos personales recogidos a través de este sitio web es Mikel Zabaleta, con correo electrónico de contacto: mizamae@gmail.com.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "2. Datos recopilados" %}</h5>
+        <p>
+            A través de este sitio web se recogen los siguientes datos personales de los usuarios:
+        </p>
+        <ul class="list-group">
+            <li class="list-group-item border-0">- Nombre</li>
+            <li class="list-group-item border-0">- Apellidos</li>
+            <li class="list-group-item border-0">- Dirección de correo electrónico</li>
+        </ul>
+        <p>
+            Asimismo, el usuario podrá introducir información relacionada con sus ingestas diarias, con el fin de hacer seguimiento de su evolución.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "3. Finalidad del tratamiento" %}</h5>
+        <p>
+            Los datos personales proporcionados por el usuario serán tratados con las siguientes finalidades:
+        </p>
+        <ul class="list-group">
+            <li class="list-group-item border-0">- Gestionar el registro del usuario en la plataforma.</li>
+            <li class="list-group-item border-0">- Permitir el acceso a un historial personalizado de ingestas diarias.</li>
+            <li class="list-group-item border-0">- Facilitar el seguimiento y visualización de la evolución de dichas ingestas.</li>
+            <li class="list-group-item border-0">- Enviar comunicaciones relacionadas con el servicio, en caso necesario.</li>
+        </ul>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "4. Base legal para el tratamiento" %}</h5>
+        <p>
+            La base legal para el tratamiento de los datos es el consentimiento del usuario, otorgado al registrarse en la web y aceptar la presente Política de Privacidad.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "5. Conservación de los datos" %}</h5>
+        <p>
+            Los datos personales se conservarán mientras el usuario mantenga su cuenta activa o solicite su supresión. Posteriormente, podrán mantenerse bloqueados durante el tiempo necesario para cumplir con obligaciones legales.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "6. Destinatarios de los datos" %}</h5>
+        <p>
+            Los datos no serán cedidos a terceros, salvo obligación legal o cuando sea necesario para la prestación del servicio (por ejemplo, proveedores tecnológicos que actúen como encargados del tratamiento).
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "7. Derechos del usuario" %}</h5>
+        <p>
+            El usuario tiene derecho a:
+        </p>
+        <ul class="list-group">
+            <li class="list-group-item border-0">- Acceder a sus datos personales.</li>
+            <li class="list-group-item border-0">- Solicitar la rectificación de datos inexactos.</li>
+            <li class="list-group-item border-0">- Solicitar su supresión cuando los datos ya no sean necesarios.</li>
+            <li class="list-group-item border-0">- Limitar u oponerse al tratamiento de sus datos.</li>
+            <li class="list-group-item border-0">- Solicitar la portabilidad de sus datos.</li>
+        </ul>
+        <p>
+            Para ejercer estos derechos, el usuario puede enviar una solicitud al correo electrónico indicado anteriormente.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "8. Seguridad de los datos" %}</h5>
+        <p>
+            El responsable del tratamiento adopta las medidas técnicas y organizativas necesarias para garantizar la seguridad e integridad de los datos personales, evitando su pérdida, alteración o acceso no autorizado.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "9. Modificaciones de la política de privacidad" %}</h5>
+        <p>
+            El responsable se reserva el derecho a modificar la presente Política de Privacidad para adaptarla a novedades legislativas o jurisprudenciales. En caso de cambios relevantes, se informará a los usuarios.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "10. Aceptación de la política de privacidad" %}</h5>
+        <p>
+            El uso de este sitio web implica la aceptación de esta Política de Privacidad.
+        </p>
+    </div>
+    <div class="row d-flex justify-content-left col-12">
+        <div class="w-100 d-none d-md-block"></div>
+        <h5>{% trans "Última actualización: 20/04/2026" %}</h5>
+    </div>
+  </div>
+</div>
+{% endblock container %}

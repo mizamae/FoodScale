@@ -34,6 +34,7 @@ register_converter(NegativeIntConverter, 'negint')
 urlpatterns = [
     path(settings.APP_NAME+'/admin/', admin.site.urls),
     path(settings.APP_NAME+"/", views.home , name="home"),
+    path(settings.APP_NAME+"/privacy/", views.privacy , name="privacyConditions"),
     path(settings.APP_NAME+'/contactus/', views.contact , name="contactForm"),
     path(settings.APP_NAME+"/accounts/", include("django.contrib.auth.urls")),
     path(settings.APP_NAME+"/userapp/", include("UsersAPP.urls")),

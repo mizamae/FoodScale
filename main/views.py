@@ -21,7 +21,8 @@ from .forms import  WebContactForm
 def home(request):
     return TemplateResponse(request, 'home.html',{ 'contactForm':WebContactForm()})
 
-
+def privacy(request):
+    return TemplateResponse(request, 'privacy_policy.html',)
 
 def contact(request):
     if request.method == 'POST':

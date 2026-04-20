@@ -203,8 +203,8 @@ class Meal(models.Model):
             return 0
     
     @staticmethod
-    def accumulateDailyQuantity(day):
-        meals = Meal.objects.filter(dateTime__date=day)
+    def accumulateDailyQuantity(day,user):
+        meals = Meal.objects.filter(dateTime__date=day,owner=user)
         result=0
         for meal in meals:
             result += meal.totalQuantity
@@ -216,7 +216,7 @@ class Meal(models.Model):
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalInfoBasic)
-        totalQuant = Meal.accumulateDailyQuantity(day)
+        totalQuant = Meal.accumulateDailyQuantity(day,user)
         for nutrient in result:
             if nutrient['unit']=='g':
                 nutrient['fraction'] = round(nutrient['quant']/totalQuant*100,2)
