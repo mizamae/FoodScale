@@ -19,23 +19,34 @@
         <label for="{{ form.ingredient.id_for_label }}" class="form-label">{% trans "Ingrediente" %}</label>
         <div id="div_id_ingredient" class"mb-3">
           <div class"col-8">
-            <input
-                class="form-control textinput",
-                type="text"
-                name="ingredientInput"
-                id="id_ingredientInput"
-                hx-get="{% url 'FoodAPP_ingredientAutocomplete' %}"
-                hx-trigger="keyup changed delay:300ms"
-                hx-target="#ingredient-results"
-                hx-include="#ingredientInput"
-                hx-vals='js:{q: document.getElementById("id_ingredientInput").value}'
-                autocomplete="off"
-            >
+            <div class="input-group">
+              <input
+                  class="form-control textinput",
+                  type="text"
+                  name="ingredientInput"
+                  id="id_ingredientInput"
+                  hx-get="{% url 'FoodAPP_ingredientAutocomplete' %}"
+                  hx-trigger="keyup changed delay:300ms[this.value.length > 0]"
+                  hx-target="#ingredient-results"
+                  hx-include="#ingredientInput"
+                  hx-vals='js:{q: document.getElementById("id_ingredientInput").value}'
+                  hx-on:htmx:config-request="if(!this.value.trim()){ event.preventDefault(); }"
+                  autocomplete="off"
+              >
+              <button 
+                  class="btn btn-outline-secondary d-none"
+                  type="button"
+                  id="clear-btn"
+                  onclick="clearIngredient()"
+              >
+                  ✕
+              </button>
+            </div>
           </div>
         </div>
         <div class="invalid-feedback">{{ form.ingredientInput.errors|first }}</div>
       </div>
-      <div id="ingredient-results"></div>
+      <div id="ingredient-results" ></div>
       
       <div class="mb-3">
         <label for="{{ form.quantity.id_for_label }}" class="form-label">{% trans "Cantidad" %} [g]</label>
@@ -51,3 +62,34 @@
       <button type="submit" class="btn btn-primary">{% trans "Guardar" %}</button>
     </div>
   </form>
+
+  <script>
+    const results = document.getElementById("ingredient-results");
+    const input = document.getElementById("id_ingredientInput");
+    const clearBtn = document.getElementById("clear-btn");
+
+    input.addEventListener("input", function () {
+        if (input.value.length > 0) {
+            clearBtn.classList.remove("d-none");
+        } else {
+            clearBtn.classList.add("d-none");
+            results.innerHTML = "";
+        }
+    });
+
+    function clearIngredient() {
+        
+        input.value = "";
+        input.focus();
+
+        // dispara evento para que htmx actualice resultados
+        //input.dispatchEvent(new Event('keyup'));
+    }
+
+    clearBtn.addEventListener("click", function () {
+        input.value = "";
+        clearBtn.classList.add("d-none");
+        results.innerHTML = "";
+        input.focus();
+    });
+</script>
