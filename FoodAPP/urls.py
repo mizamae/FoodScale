@@ -10,6 +10,7 @@ from . import views
 urlpatterns = [
     path("calculator/<negint:dayOffset>", views.calculator, name="FoodAPP_calculator"),
     # path("createmeal/", views.createMeal, name="FoodAPP_createMeal"),
+    path("ingredient-autocomplete/", views.ingredient_autocomplete, name="FoodAPP_ingredientAutocomplete"),
     path("meal/<negint:dayOffset>", views.viewDayMeals, name="FoodAPP_viewDayMeals"),
     path("meal/nutrients/<negint:dayOffset>", views.viewDayNutrients, name="FoodAPP_viewDayNutrients"),
     path("meal/nutrients/graph/<negint:dayOffset>", views.viewDayNutrientsGraph, name="FoodAPP_graphDayNutrients"),

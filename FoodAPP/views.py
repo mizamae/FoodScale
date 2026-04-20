@@ -12,7 +12,7 @@ import json
 from django.utils import timezone
 import datetime
 from .forms import CombinationPositionFormSet, CombinationPositionInlineForm, CombinationPositionInTable
-from .models import Meal, CombinationPosition
+from .models import Meal, CombinationPosition, Ingredient
 import logging
 logger = logging.getLogger("users")
 
@@ -25,7 +25,10 @@ def calculator(request,dayOffset=0):
 def addIngredient(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
     if request.method == "POST":
-        form = CombinationPositionInTable(request.POST)
+        # we have to do this to assign teh ingrdient field before form validation
+        updated_data = request.POST.copy()
+        updated_data.update({'ingredient': Ingredient.objects.get(name=updated_data['ingredientInput'])}) 
+        form = CombinationPositionInTable(data=updated_data)
         if form.is_valid():
             mealType = int(form.cleaned_data.get('mealType'))
             ingredient = form.cleaned_data.get('ingredient')
@@ -45,12 +48,12 @@ def addIngredient(request,dayOffset):
                     })
                 })
         else:
-            return render(request, 'FoodAPP/ingredientForm.html', {
+            return render(request, 'FoodAPP/ingredientAddForm.html', {
                 'form': form,
             })
     else:
         form = CombinationPositionInTable()
-    return render(request, 'FoodAPP/ingredientForm.html', {
+    return render(request, 'FoodAPP/ingredientAddForm.html', {
         'form': form,
     })
 
@@ -76,6 +79,17 @@ def viewDayNutrientsGraph(request,dayOffset):
     figure = Meal.getNutrientsPlot(day)
     return render(request, 'FoodAPP/daynutrientsgraph.html', {'nutrientsPlot':figure})
 
+def ingredient_autocomplete(request):
+    q = request.GET.get("q", "")
+    ingredients = []
+
+    if q:
+        ingredients = Ingredient.objects.filter(name__icontains=q)[:10]
+
+    return render(request, "FoodAPP/ingredient_options.html", {
+        "ingredients": ingredients
+    })
+
 @login_required
 def editIngredient(request,pk):
     pos = CombinationPosition.objects.get(pk=pk)
@@ -94,13 +108,13 @@ def editIngredient(request,pk):
                     })
                 })
         else:
-            return render(request, 'FoodAPP/ingredientForm.html', {
+            return render(request, 'FoodAPP/ingredientEditForm.html', {
                 'form': form,
             })
     else:
         
         form = CombinationPositionInTable(instance=pos,**{'editing':True})
-        return render(request, 'FoodAPP/ingredientForm.html', {
+        return render(request, 'FoodAPP/ingredientEditForm.html', {
             'form': form,
         })
 

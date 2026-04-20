@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.conf import settings
 from django.db.models import Q
-
+from django.urls import reverse
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions,AppendedText, PrependedText,Accordion, AccordionGroup,UneditableField, InlineField
@@ -17,6 +17,7 @@ FORMS_FIELD_CLASS='col-8'
 
 class CombinationPositionInTable(ModelForm):
 
+    ingredientInput=forms.CharField()
     mealType=forms.ChoiceField(label=_("Tipo de comida"),choices = Meal.MEAL_TYPES,
                                help_text=_("Selecciona la comida del dia en la que añadir el alimento"),required=True)
 
@@ -35,8 +36,11 @@ class CombinationPositionInTable(ModelForm):
         self.helper.form_show_labels = False
         self.fields['ingredient'].disabled = editing
         self.fields['mealType'].disabled = editing
+        self.fields['ingredientInput'].disabled = editing
         self.fields['ingredient'].required = not editing
         self.fields['mealType'].required = not editing
+        if editing:
+            self.fields['ingredientInput'].initial = self.fields['ingredient']
         for field in self.fields:
             help_text = self.fields[field].help_text
             self.fields[field].help_text = None
@@ -52,8 +56,11 @@ class CombinationPositionInTable(ModelForm):
         self.helper.layout = Layout(
                                     Field('mealType',type=''),
                                     AppendedText('quantity','g',type=''),
-                                    Field('ingredient',type='search'),
+                                    Field('ingredientInput',
+                                          type="text"),
                                 )
+        
+
         
 
 class CombinationPositionInlineForm(ModelForm):

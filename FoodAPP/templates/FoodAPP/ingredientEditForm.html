@@ -17,22 +17,7 @@
       
       <div class="mb-3">
         <label for="{{ form.ingredient.id_for_label }}" class="form-label">{% trans "Ingrediente" %}</label>
-        <div id="div_id_ingredient" class"mb-3">
-          <div class"col-8">
-            <input
-                class="form-control textinput",
-                type="text"
-                name="ingredientInput"
-                id="id_ingredientInput"
-                hx-get="{% url 'FoodAPP_ingredientAutocomplete' %}"
-                hx-trigger="keyup changed delay:300ms"
-                hx-target="#ingredient-results"
-                hx-include="#ingredientInput"
-                hx-vals='js:{q: document.getElementById("id_ingredientInput").value}'
-                autocomplete="off"
-            >
-          </div>
-        </div>
+        {{ form.ingredient|as_crispy_field }}
         <div class="invalid-feedback">{{ form.ingredientInput.errors|first }}</div>
       </div>
       <div id="ingredient-results"></div>
