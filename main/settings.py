@@ -14,7 +14,7 @@ from pathlib import Path
 from os.path import dirname, join, exists
 from os import mkdir
 
-
+APP_NAME = 'foodscale'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

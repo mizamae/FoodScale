@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, register_converter
-
+from django.conf import settings
 from . import views
 
 class NegativeIntConverter:
@@ -30,12 +30,12 @@ class NegativeIntConverter:
 
 register_converter(NegativeIntConverter, 'negint')
 
-APP_NAME = 'foodscale'
+
 urlpatterns = [
-    path(APP_NAME+'/admin/', admin.site.urls),
-    path(APP_NAME+"/", views.home , name="home"),
-    path(APP_NAME+'/contactus/', views.contact , name="contactForm"),
-    path(APP_NAME+"/accounts/", include("django.contrib.auth.urls")),
-    path(APP_NAME+"/userapp/", include("UsersAPP.urls")),
-    path(APP_NAME+"/foodapp/", include("FoodAPP.urls")),
+    path(settings.APP_NAME+'/admin/', admin.site.urls),
+    path(settings.APP_NAME+"/", views.home , name="home"),
+    path(settings.APP_NAME+'/contactus/', views.contact , name="contactForm"),
+    path(settings.APP_NAME+"/accounts/", include("django.contrib.auth.urls")),
+    path(settings.APP_NAME+"/userapp/", include("UsersAPP.urls")),
+    path(settings.APP_NAME+"/foodapp/", include("FoodAPP.urls")),
 ]

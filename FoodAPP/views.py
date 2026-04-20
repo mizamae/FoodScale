@@ -69,14 +69,13 @@ def viewDayMeals(request,dayOffset):
 @login_required
 def viewDayNutrients(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
-    meals = Meal.objects.filter(dateTime__date=day,owner = request.user).order_by("dateTime")
-    positions=Meal.accumulateDailyNutrients(day=day)
+    positions=Meal.accumulateDailyNutrients(day=day,user=request.user)
     return render(request, 'FoodAPP/daynutrients.html', {'positions': positions})
 
 @login_required
 def viewDayNutrientsGraph(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
-    figure = Meal.getNutrientsPlot(day)
+    figure = Meal.getNutrientsPlot(day,request.user)
     return render(request, 'FoodAPP/daynutrientsgraph.html', {'nutrientsPlot':figure})
 
 def ingredient_autocomplete(request):

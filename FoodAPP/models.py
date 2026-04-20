@@ -211,8 +211,8 @@ class Meal(models.Model):
         return result
 
     @staticmethod
-    def accumulateDailyNutrients(day):
-        meals = Meal.objects.filter(dateTime__date=day)
+    def accumulateDailyNutrients(day,user):
+        meals = Meal.objects.filter(dateTime__date=day,owner=user)
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalInfoBasic)
@@ -239,22 +239,22 @@ class Meal(models.Model):
         return result
     
     @staticmethod
-    def getNutrientsPlot(day):
+    def getNutrientsPlot(day,user):
         import plotly.graph_objects as go
         from plotly.offline import plot
         from plotly.subplots import make_subplots
         import pandas as pd
 
-        data = Meal.accumulateDailyNutrients(day)
+        data = Meal.accumulateDailyNutrients(day,user)
         df = pd.DataFrame(data)
         if not df.empty:
             df1 = df[df['fraction'].notna()]
             df1 = df1.sort_values(by='fraction',ascending=False)
             fig = make_subplots(rows=1,specs=[[{"secondary_y": False}]])
-            fig.update_yaxes(title_text=str(_("Distribucion de nutrientes")), secondary_y=False)
+            fig.update_yaxes(title_text=str(_("Distribucion de macronutrientes")), secondary_y=False)
             fig.add_trace(go.Bar(x=df1.name.values, y=df1.fraction.values,
                                  text=df1.fraction.values,textposition='auto',
-                                 name=str(_("Distribucion de nutrientes")),offsetgroup=1),secondary_y=False,)
+                                 name=str(_("Distribucion de macronutrientes")),offsetgroup=1),secondary_y=False,)
             fig.update_traces(texttemplate='%{text:.2s}%')
             fig.update_layout(
                 barmode='group',
