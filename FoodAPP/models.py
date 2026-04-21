@@ -121,6 +121,22 @@ class Ingredient(ModelWithImage):
             result = self.nutrients['grasas']           
         return result
     
+    @property
+    def vitaminsInfo(self):
+        """Returns the vitamins information of the ingredient per 100g"""
+        result =[]
+        if self.nutrients:
+            result = self.nutrients['vitaminas']           
+        return result
+    
+    @property
+    def mineralsInfo(self):
+        """Returns the minerals information of the ingredient per 100g"""
+        result =[]
+        if self.nutrients:
+            result = self.nutrients['minerales']           
+        return result
+    
     def scaledBasicInfo(self,weight):
         result = self.basicInfo
         for nutrient in result:
@@ -146,6 +162,22 @@ class Ingredient(ModelWithImage):
                 result.append(nutrient)
         return result
 
+    def scaledVitaminsInfo(self,weight):
+        result = self.vitaminsInfo
+        for nutrient in result:
+            nutrient['quant'] = round(nutrient['quant']*weight/100,2)
+            # nutrient['name'] = nutrient['name'].split(",")[0] if "," in nutrient['name'] else nutrient['name']
+            # nutrient['name'] = nutrient['name'].split("(")[0] if "(" in nutrient['name'] else nutrient['name']
+        return result
+    
+    def scaledMineralsInfo(self,weight):
+        result = self.mineralsInfo
+        for nutrient in result:
+            nutrient['quant'] = round(nutrient['quant']*weight/100,2)
+            # nutrient['name'] = nutrient['name'].split(",")[0] if "," in nutrient['name'] else nutrient['name']
+            # nutrient['name'] = nutrient['name'].split("(")[0] if "(" in nutrient['name'] else nutrient['name']
+        return result
+
 
 class CombinationPosition(models.Model):
     class Meta:
@@ -167,6 +199,14 @@ class CombinationPosition(models.Model):
     @property
     def scaledFatInfo(self,):
         return self.ingredient.scaledFatInfo(weight=self.quantity)
+    
+    @property
+    def scaledVitaminsInfo(self,):
+        return self.ingredient.scaledVitaminsInfo(weight=self.quantity)
+    
+    @property
+    def scaledMineralsInfo(self,):
+        return self.ingredient.scaledMineralsInfo(weight=self.quantity)
     
     @property
     def scale(self,):
@@ -226,6 +266,22 @@ class Meal(models.Model):
             overall = Meal.accumulateListOfDictionaries(list1=overall,list2=data)
         return overall
     
+    @property
+    def nutritionalVitaminsInfo(self):
+        overall = []
+        for combination in self.ingredients:
+            data = combination.scaledVitaminsInfo
+            overall = Meal.accumulateListOfDictionaries(list1=overall,list2=data)
+        return overall
+    
+    @property
+    def nutritionalMineralsInfo(self):
+        overall = []
+        for combination in self.ingredients:
+            data = combination.scaledMineralsInfo
+            overall = Meal.accumulateListOfDictionaries(list1=overall,list2=data)
+        return overall
+    
     def appendIngredient(self,quantity,ingredient):
         try:
             pos = CombinationPosition.objects.get(meal=self,ingredient=ingredient)
@@ -267,6 +323,22 @@ class Meal(models.Model):
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalFatInfo)
+        return result
+    
+    @staticmethod
+    def accumulateDailyVitamins(day,user):
+        meals = Meal.objects.filter(dateTime__date=day,owner=user)
+        result=[]
+        for meal in meals:
+            result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalVitaminsInfo)
+        return result
+    
+    @staticmethod
+    def accumulateDailyMinerals(day,user):
+        meals = Meal.objects.filter(dateTime__date=day,owner=user)
+        result=[]
+        for meal in meals:
+            result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalMineralsInfo)
         return result
     
     @staticmethod

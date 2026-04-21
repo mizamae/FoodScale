@@ -85,6 +85,18 @@ def viewDayFatTable(request,dayOffset):
     return render(request, 'FoodAPP/daynutrients.html', {'positions': positions})
 
 @login_required
+def viewDayVitaminsTable(request,dayOffset):
+    day = datetime.date.today() + datetime.timedelta(days=dayOffset)
+    positions=Meal.accumulateDailyVitamins(day=day,user=request.user)
+    return render(request, 'FoodAPP/daynutrients.html', {'positions': positions})
+
+@login_required
+def viewDayMineralsTable(request,dayOffset):
+    day = datetime.date.today() + datetime.timedelta(days=dayOffset)
+    positions=Meal.accumulateDailyMinerals(day=day,user=request.user)
+    return render(request, 'FoodAPP/daynutrients.html', {'positions': positions})
+
+@login_required
 def viewDayFatGraph(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
     figure = Meal.getFatPlot(day,request.user)
