@@ -76,7 +76,19 @@ def viewDayNutrients(request,dayOffset):
 def viewDayNutrientsGraph(request,dayOffset):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
     figure = Meal.getNutrientsPlot(day,request.user)
-    return render(request, 'FoodAPP/daynutrientsgraph.html', {'nutrientsPlot':figure})
+    return render(request, 'FoodAPP/daynutrientsgraph.html', {'plot':figure})
+
+@login_required
+def viewDayFatTable(request,dayOffset):
+    day = datetime.date.today() + datetime.timedelta(days=dayOffset)
+    positions=Meal.accumulateDailyFat(day=day,user=request.user)
+    return render(request, 'FoodAPP/daynutrients.html', {'positions': positions})
+
+@login_required
+def viewDayFatGraph(request,dayOffset):
+    day = datetime.date.today() + datetime.timedelta(days=dayOffset)
+    figure = Meal.getFatPlot(day,request.user)
+    return render(request, 'FoodAPP/daynutrientsgraph.html', {'plot':figure})
 
 def ingredient_autocomplete(request):
     q = request.GET.get("q", "")

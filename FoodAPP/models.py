@@ -113,10 +113,37 @@ class Ingredient(ModelWithImage):
             result = self.nutrients['proximales']+self.nutrients['hidratos de carbono']            
         return result
     
+    @property
+    def fatInfo(self):
+        """Returns the fat information of the ingredient per 100g"""
+        result =[]
+        if self.nutrients:
+            result = self.nutrients['grasas']           
+        return result
+    
     def scaledBasicInfo(self,weight):
         result = self.basicInfo
         for nutrient in result:
             nutrient['quant'] = round(nutrient['quant']*weight/100,2)
+            nutrient['name'] = nutrient['name'].split(",")[0] if "," in nutrient['name'] else nutrient['name']
+            nutrient['name'] = nutrient['name'].split("(")[0] if "(" in nutrient['name'] else nutrient['name']
+        return result
+    
+    def scaledFatInfo(self,weight):
+        interesting = ['Acidos grasos','colesterol']
+        info = self.fatInfo
+        result=[]
+        for nutrient in info:
+            found=False
+            for key in interesting:
+                if key in nutrient['name']:
+                    found=True
+                    break
+            if found:
+                nutrient['quant'] = round(nutrient['quant']*weight/100,2)
+                nutrient['name'] = nutrient['name'].replace(",","").replace("Acidos grasos ","")
+                nutrient['name'] = nutrient['name'].split("(")[1].replace(")","") if "(" in nutrient['name'] else nutrient['name']
+                result.append(nutrient)
         return result
 
 
@@ -136,6 +163,10 @@ class CombinationPosition(models.Model):
     @property
     def scaledBasicInfo(self,):
         return self.ingredient.scaledBasicInfo(weight=self.quantity)
+    
+    @property
+    def scaledFatInfo(self,):
+        return self.ingredient.scaledFatInfo(weight=self.quantity)
     
     @property
     def scale(self,):
@@ -187,6 +218,14 @@ class Meal(models.Model):
             overall = Meal.accumulateListOfDictionaries(list1=overall,list2=data)
         return overall
     
+    @property
+    def nutritionalFatInfo(self):
+        overall = []
+        for combination in self.ingredients:
+            data = combination.scaledFatInfo
+            overall = Meal.accumulateListOfDictionaries(list1=overall,list2=data)
+        return overall
+    
     def appendIngredient(self,quantity,ingredient):
         try:
             pos = CombinationPosition.objects.get(meal=self,ingredient=ingredient)
@@ -223,6 +262,14 @@ class Meal(models.Model):
         return result
 
     @staticmethod
+    def accumulateDailyFat(day,user):
+        meals = Meal.objects.filter(dateTime__date=day,owner=user)
+        result=[]
+        for meal in meals:
+            result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalFatInfo)
+        return result
+    
+    @staticmethod
     def accumulateListOfDictionaries(list1,list2):
         """ list1 is the storage list list 2 is teh new list to be added"""
         result=list1
@@ -256,6 +303,33 @@ class Meal(models.Model):
                                  text=df1.fraction.values,textposition='auto',
                                  name=str(_("Distribucion de macronutrientes")),offsetgroup=1),secondary_y=False,)
             fig.update_traces(texttemplate='%{text:.2s}%')
+            fig.update_layout(
+                barmode='group',
+                bargap=0.0, # gap between bars of adjacent location coordinates.
+                bargroupgap=0, # gap between bars of the same location coordinate.
+                margin=dict(l=20, r=20, t=20, b=20),
+                )
+            return plot({'data': fig}, output_type='div')
+        else:
+            return _("No hay datos para mostrar")
+        
+    @staticmethod
+    def getFatPlot(day,user):
+        import plotly.graph_objects as go
+        from plotly.offline import plot
+        from plotly.subplots import make_subplots
+        import pandas as pd
+
+        data = Meal.accumulateDailyFat(day,user)
+        df = pd.DataFrame(data)
+        if not df.empty:
+
+            fig = make_subplots(rows=1,specs=[[{"secondary_y": False}]])
+            fig.update_yaxes(title_text=str(_("Distribucion de grasas")), secondary_y=False)
+            fig.add_trace(go.Bar(x=df.name.values, y=df.quant.values,
+                                 text=[str(value)+" " +str(unit) for value,unit in zip(df.quant.values,df.unit.values)],textposition='auto',
+                                 name=str(_("Distribucion de grasas")),offsetgroup=1),secondary_y=False,)
+            fig.update_traces(texttemplate='%{text}')
             fig.update_layout(
                 barmode='group',
                 bargap=0.0, # gap between bars of adjacent location coordinates.
