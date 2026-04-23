@@ -9,7 +9,7 @@ Restart=always
 RestartSec=3
 StartLimitIntervalSec=0
 WorkingDirectory=/root/FoodScale/
-ExecStart= /root/FoodScale/env/bin/celery -A FoodScale beat -l info
+ExecStart= /root/FoodScale/env/bin/celery -A main beat -l info
 
 
 [Install]
