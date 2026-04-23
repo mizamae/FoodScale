@@ -53,6 +53,7 @@ MEDIA_URL = '/media/' # Public URL at the browser
 SECRET_KEY = env('SECRET_KEY',default='django-insecure-xuxao-&y!gqxjhm76cy4c3d5v9vrf+!g6g_=9=@!nma4&66vz#')
 SIGNATURE_KEY = env('SIGNATURE_KEY')
 
+VAPID_PUBLICKEY = env('VAPID_PUBLICKEY',default=None)
 
 ALLOWED_HOSTS = [s.strip() for s in env('ALLOWED_HOSTS').split(',')]
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1',]
@@ -143,6 +144,12 @@ INSTALLED_APPS = [
     'FoodAPP'
 
 ]
+
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "WP_PRIVATE_KEY": join(BASE_DIR, "private_key.pem"),
+        "WP_CLAIMS": {'sub': "mailto:mizamae@gmail.com"}
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -26,7 +26,7 @@ app.autodiscover_tasks()
 def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every hour.
     sender.add_periodic_task(
-                                crontab(hour='*',minute=0), 
+                                crontab(hour='*',minute='*'), 
                                 hourlyTasks.s('hello'), name='main hourly')
 
     # Executes everyday morning at 0:00 a.m.
@@ -49,7 +49,11 @@ def config_loggers(*args, **kwargs):
     
 @app.task(name='main Hourly task',ignore_result=True)
 def hourlyTasks(arg):
-    pass
+    from django.contrib.auth import get_user_model
+    User=get_user_model()
+    users = User.objects.all()
+    for user in users:
+        user.sendNotification(title="This is title",body="Hola hola!!!",redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
 
 @app.task(name='main Daily task',ignore_result=True)
 def dailyTasks():

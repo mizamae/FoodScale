@@ -11,9 +11,9 @@ from crispy_forms.bootstrap import FormActions,AppendedText, PrependedText,Accor
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Column, Field,Fieldset
 from crispy_forms.templatetags.crispy_forms_field import css_class
 
-from .models import CombinationPosition,Ingredient, Meal
-FORMS_LABEL_CLASS='col-4'
-FORMS_FIELD_CLASS='col-8'
+from .models import CombinationPosition,Ingredient, Meal, Diet
+FORMS_LABEL_CLASS='col-8'
+FORMS_FIELD_CLASS='col-4'
 
 class CombinationPositionInTable(ModelForm):
 
@@ -60,6 +60,73 @@ class CombinationPositionInTable(ModelForm):
                                           type="text"),
                                 )
         
+class DietForm(ModelForm):
+    source=forms.CharField(label=_("Origen de los limites"),required=False)
+
+    class Meta:
+        model = Diet
+        exclude = ['owner','values']
+    
+    def __init__(self, *args, **kwargs):
+        super(DietForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.label_class = FORMS_LABEL_CLASS
+        self.helper.field_class = FORMS_FIELD_CLASS
+        self.helper.form_class = 'form-horizontal'
+        self.helper.form_method = 'post'
+        self.helper.form_show_labels = True
+        
+        self.helper.layout = Layout()
+        
+        values = self.instance.values
+        self.fields['source'].initial = values['source']
+        row = Div(css_class='row d-flex justify-content-center')
+        row.append(Div(css_class="w-100 d-none d-md-block"))
+        row.append(HTML('<h5>'+_("General")+'</h5>'))
+        row.append(Field('description',type='text'))
+        row.append(Field('source',type='text'))
+        self.helper.layout.append(row)
+        
+        for nutrient in values["nutrients"]:
+            row = Div(css_class='row d-flex justify-content-center')
+            row.append(Div(css_class="w-100 d-none d-md-block"))
+            row.append(HTML('<h5>'+nutrient['name']+'</h5>'))
+            for item in nutrient['nutrients']:
+                self.fields[nutrient['name']+"_"+item['name']] = forms.FloatField(label=item['name'],required = False,initial = item['quant'],disabled=False)
+                row.append(AppendedText(nutrient['name']+"_"+item['name'],item['unit']))
+            self.helper.layout.append(row)
+        
+        for field in self.fields:
+            help_text = self.fields[field].help_text
+            self.fields[field].help_text = None
+            if help_text != '':
+                self.fields[field].widget.attrs.update({'class':'form-control '+self.fields[field].widget.attrs['class'] if "class" in self.fields[field].widget.attrs else "",
+                                                        'data-toggle':'tooltip' ,
+                                                        'title':help_text, 
+                                                        'data-bs-placement':'right', 
+                                                        'data-bs-container':'body'})
+            else:
+                self.fields[field].widget.attrs.update({'class':'form-control'})
+        
+        
+
+        buttons=Div(
+                    Div(css_class="w-100 d-none d-md-block"),
+                    Div(
+                        Column(Submit('submit', _('Save'),css_class="btn btn-primary col-12"),css_class="col-6"),
+                        Column(HTML('<a href="{% url "home" %}" class="btn btn-light col-12">'+str(_('Cancel'))+'</a>'),css_class="col-6"),
+                        css_class="row"
+                    ),
+                    css_class="row d-flex justify-content-center"
+                    )
+        
+        
+        self.helper.layout.append(buttons)
+
+    def clean(self,):
+        cleaned_data = super(DietForm, self).clean()
+        for field in cleaned_data:
+            print(field)
 
         
 

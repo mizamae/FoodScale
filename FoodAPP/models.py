@@ -8,7 +8,7 @@ import uuid
 import os
 from django.core.files.storage import FileSystemStorage
 from PIL import Image, ExifTags
-import jmespath
+import json
 
 FILE_DIR = os.path.join(settings.MEDIA_ROOT)
 IMAGES_FILESYSTEM = FileSystemStorage(location=FILE_DIR,base_url=settings.MEDIA_URL)
@@ -313,6 +313,7 @@ class Meal(models.Model):
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalInfoBasic)
         totalQuant = Meal.accumulateDailyQuantity(day,user)
         for nutrient in result:
+            nutrient['target'] = user.diet.getValueNutrient(nutrient['name'])
             if nutrient['unit']=='g':
                 nutrient['fraction'] = round(nutrient['quant']/totalQuant*100,2)
         return result
@@ -323,6 +324,8 @@ class Meal(models.Model):
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalFatInfo)
+        for nutrient in result:
+            nutrient['target'] = user.diet.getValueNutrient(nutrient['name'])
         return result
     
     @staticmethod
@@ -331,6 +334,8 @@ class Meal(models.Model):
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalVitaminsInfo)
+        for nutrient in result:
+            nutrient['target'] = user.diet.getValueNutrient(nutrient['name'])
         return result
     
     @staticmethod
@@ -339,6 +344,8 @@ class Meal(models.Model):
         result=[]
         for meal in meals:
             result=Meal.accumulateListOfDictionaries(list1=result,list2=meal.nutritionalMineralsInfo)
+        for nutrient in result:
+            nutrient['target'] = user.diet.getValueNutrient(nutrient['name'])
         return result
     
     @staticmethod
@@ -413,4 +420,25 @@ class Meal(models.Model):
             return _("No hay datos para mostrar")
 
 
+def getDefaultCDR():
+    try:
+        with open('default_cdr.json','r') as fp:
+            defaultCDR = json.load(fp)
+    except:
+        defaultCDR = dict
+    return defaultCDR
 
+class Diet(models.Model): 
+    owner = models.OneToOneField(to=User,related_name='diet',on_delete=models.CASCADE)
+    description = models.CharField(max_length=150, verbose_name=_("Descripcion"),default="",blank=True)
+    values = models.JSONField(default = getDefaultCDR)
+
+    class Meta:
+        ordering=['owner',]
+
+    def getValueNutrient(self,nutrient):
+        for family in self.values['nutrients']:
+            for nutr in family['nutrients']:
+                if nutrient in nutr['name']:
+                    return nutr['quant']
+        return None

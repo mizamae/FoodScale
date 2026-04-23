@@ -19,6 +19,7 @@ from django.urls import path, include, register_converter
 from django.conf import settings
 from . import views
 
+
 class NegativeIntConverter:
     regex = '-?\d+'
 
@@ -39,4 +40,6 @@ urlpatterns = [
     path(settings.APP_NAME+"/accounts/", include("django.contrib.auth.urls")),
     path(settings.APP_NAME+"/userapp/", include("UsersAPP.urls")),
     path(settings.APP_NAME+"/foodapp/", include("FoodAPP.urls")),
+
+    path(settings.APP_NAME+"/webpush/", views.webPushSubscription ,name='web_push_subscription'),
 ]

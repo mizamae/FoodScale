@@ -15,13 +15,22 @@
                     <i class="fas fa-circle fa-stack-2x text-primary"></i>
                     <i class="fa fa-calculator fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="my-3">Calculadora nutricional</h4>
+                <h4 class="my-3">{% trans "Calculadora nutricional" %}</h4>
                 <p class="text-muted">Podrás calcular rápidamente cuantas calorías y nutrientes tiene una determinada combinación de alimentos.<br>
                     Todos los datos están extraidos de la base de datos BEDCA (puedes consultarla en https://www.bedca.net/) desde donde los iré sincronizando 
                     de forma periódica.
                 </p>
             </div>
-            
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x" role="button" onclick="window.location.href='{% url 'FoodAPP_dietdesigner' %}';">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fa fa-ruler-vertical fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">{% trans "Metas nutricionales" %}</h4>
+                <p class="text-muted">Podrás definirte los valores de ingesta diarios deseados.<br>
+                </p>
+            </div>
         </div>
+        
     </div>
 </section>

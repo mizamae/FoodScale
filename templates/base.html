@@ -25,7 +25,7 @@
         <!-- Scripts: Bootstraps, HTMX, and custom JavaScript -->
         <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/htmx.min.js' %}"></script>
-    
+        <script src="{% static 'js/jquery.js' %}"></script>
 
     </head>
     <body id="page-top">
@@ -60,8 +60,9 @@
                                     <a class="dropdown-item" href="{% url 'UsersAPP_changePassword' %}">{% trans "Cambiar contraseña" %}</a>
                                     <form method="post" action="{% url 'logout' %}">
                                         {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Logout</button>
+                                        <button class="dropdown-item" type="submit">LOGOUT</button>
                                     </form>
+                                    <a class="dropdown-item" type='button' id='pushNotifications' href="#"></a>
                                 </div>
                             </div>
                         </li>
@@ -144,5 +145,173 @@
 
         <!-- Core theme JS-->
         <script src="{% static 'js/scripts.js' %}"></script>
+        <script>
+            // main.js for push notifications
+            const applicationServerPublicKey = '{{ VAPID_PUBLICKEY }}';
+            let pushButton = document.body.querySelector('#pushNotifications');
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                console.log('Service Worker and Push are supported');
+
+                navigator.serviceWorker.register("{% static 'js/sw.js' %}")
+                .then(function(swReg) {
+                    console.log('Service Worker is registered', swReg);
+
+                    swRegistration = swReg;
+                    initializeUI();
+                })
+                .catch(function(error) {
+                    console.error('Service Worker Error', error);
+                });
+                } else {
+                console.warn('Push messaging is not supported');
+                pushButton.textContent = 'Push Not Supported';
+            }
+
+            function initializeUI() {
+                // Set the initial subscription value
+                swRegistration.pushManager.getSubscription()
+                .then(function(subscription) {
+                    isSubscribed = !(subscription === null);
+
+                    if (isSubscribed) {
+                    console.log('User IS subscribed.');
+                    } else {
+                    console.log('User is NOT subscribed.');
+                    subscribeUser();
+                    }
+
+                    updateBtn();
+                });
+
+                pushButton.addEventListener('click', function() {
+                    pushButton.disabled = true;
+                    if (isSubscribed) {
+                        unsubscribeUser();
+                    } else {
+                        subscribeUser();
+                    }
+                });
+            
+            }
+
+            function urlBase64ToUint8Array (base64String) {
+                var padding = '='.repeat((4 - base64String.length % 4) % 4)
+                var base64 = (base64String + padding)
+                    .replace(/\-/g, '+')
+                    .replace(/_/g, '/')
+
+                var rawData = window.atob(base64)
+                var outputArray = new Uint8Array(rawData.length)
+
+                for (var i = 0; i < rawData.length; ++i) {
+                    outputArray[i] = rawData.charCodeAt(i)
+                }
+                return outputArray;
+            }
+
+            function subscribeUser() {
+                const applicationServerKey = urlBase64ToUint8Array(applicationServerPublicKey);
+                swRegistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                })
+                .then(function(subscription) {
+                    console.log('User is subscribed.');
+
+                    updateSubscriptionOnServer(subscription);
+
+                    isSubscribed = true;
+
+                    updateBtn();
+                })
+                .catch(function(error) {
+                    console.error('Failed to subscribe the user: ', error);
+                    updateBtn();
+                });
+            }
+
+            function unsubscribeUser() {
+                swRegistration.pushManager.getSubscription()
+                .then(function(subscription) {
+                    if (subscription) {
+                    return subscription.unsubscribe();
+                    }
+                })
+                .catch(function(error) {
+                    console.log('Error unsubscribing', error);
+                })
+                .then(function() {
+                    updateSubscriptionOnServer(null);
+
+                    console.log('User is unsubscribed.');
+                    isSubscribed = false;
+
+                    updateBtn();
+                });
+            }
+
+            function updateBtn() {
+                if (Notification.permission === 'denied') {
+                    pushButton.textContent = '{% trans "Notificaciones canceladas" %}';
+                    pushButton.disabled = true;
+                    updateSubscriptionOnServer(null);
+                    return;
+                }
+
+                if (isSubscribed) {
+                    pushButton.textContent = '{% trans "Deshabilitar notificaciones" %}';
+                } else {
+                    pushButton.textContent = '{% trans "Habilitar notificaciones" %}';
+                }
+
+                pushButton.disabled = false;
+            }
+
+            function updateSubscriptionOnServer(subscription) {
+                // TODO: Send subscription to application server
+
+                if (subscription) {
+                    requestPOSTToServer(subscription);
+                } else {
+                    requestPOSTToServer(subscription);
+                }
+            }
+
+            $.ajaxSetup({ 
+					beforeSend: function(xhr, settings) {
+						function getCookie(name) {
+							var cookieValue = null;
+							if (document.cookie && document.cookie != '') {
+								var cookies = document.cookie.split(';');
+								for (var i = 0; i < cookies.length; i++) {
+									var cookie = jQuery.trim(cookies[i]);
+									// Does this cookie string begin with the name we want?
+									if (cookie.substring(0, name.length + 1) == (name + '=')) {
+										cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+										break;
+									}
+								}
+							}
+							return cookieValue;
+						}
+						xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+					} 
+				});
+
+            // Send the subscription data to your server
+            function requestPOSTToServer (data) {
+                const xhttp = new XMLHttpRequest();
+                const headers = new Headers();
+                headers.set('Content-Type', 'application/json');
+                $.ajax({
+                    method: 'POST',
+                    url: "{% url 'web_push_subscription' %}",
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    success: function (data) {
+                    }
+                });
+            }
+        </script>
     </body>
 </html>

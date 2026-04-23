@@ -19,12 +19,25 @@ from django.db.models import Q
 from .forms import  WebContactForm
 
 def home(request):
-    return TemplateResponse(request, 'home.html',{ 'contactForm':WebContactForm()})
+    return TemplateResponse(request, 'home.html',{ 'contactForm':WebContactForm(),'VAPID_PUBLICKEY':settings.VAPID_PUBLICKEY})
 
 def privacy(request):
     return TemplateResponse(request, 'privacy_policy.html',)
 
+@login_required
+def webPushSubscription(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if data: # user is subscribed
+            request.user.activateNotifications(info=data)
+        else:
+            request.user.deactivateNotifications()
+        
+        return HttpResponse(status=204,content=json.dumps({}))
+    return HttpResponse(status=404,content=json.dumps({}))
+
 def contact(request):
+    
     if request.method == 'POST':
         form = WebContactForm(request.POST)
         if form.is_valid():

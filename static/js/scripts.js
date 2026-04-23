@@ -39,7 +39,8 @@ window.addEventListener('DOMContentLoaded', event => {
     };
 
     // Collapse responsive navbar when toggler is visible
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
+    // this does not allow to include dropdown menus as it collapses when clicked the dropdown
+/*     const navbarToggler = document.body.querySelector('.navbar-toggler');
     const responsiveNavItems = [].slice.call(
         document.querySelectorAll('#navbarResponsive .nav-link')
     );
@@ -49,6 +50,6 @@ window.addEventListener('DOMContentLoaded', event => {
                 navbarToggler.click();
             }
         });
-    });
+    }); */
 
 });

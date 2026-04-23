@@ -11,15 +11,39 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.utils import timezone
 import datetime
-from .forms import CombinationPositionFormSet, CombinationPositionInlineForm, CombinationPositionInTable
-from .models import Meal, CombinationPosition, Ingredient
+from .forms import CombinationPositionFormSet, CombinationPositionInlineForm, CombinationPositionInTable,DietForm
+from .models import Meal, CombinationPosition, Ingredient, Diet
 import logging
 logger = logging.getLogger("users")
 
 @login_required
 def calculator(request,dayOffset=0):
     day = datetime.date.today() + datetime.timedelta(days=dayOffset)
-    return render(request, 'FoodAPP/calculator.html',{'back_to':'home','day':day,'dayOffset':dayOffset}) 
+    return render(request, 'FoodAPP/calculator.html',{'day':day,'dayOffset':dayOffset}) 
+
+@login_required
+def dietDesigner(request):
+    diet,_ = Diet.objects.get_or_create(owner=request.user)
+    if request.method == "POST":
+        form = DietForm(request.POST,instance = diet)
+        if form.is_valid():
+            values = diet.values
+            values["source"]=form.cleaned_data['source']
+            for field in form.cleaned_data:
+                if not field in ('description','source'):
+                    family = field.split("_")[0].strip()
+                    nutrient = field.split("_")[1].strip()
+                    for fam in values['nutrients']:
+                        if fam['name']==family:
+                            for nutr in fam['nutrients']:
+                                if nutr['name']==nutrient:
+                                    nutr['quant']=form.cleaned_data[field]
+            form.cleaned_data['values']=values
+
+            form.save()
+    else:
+        form = DietForm(instance = diet)
+    return render(request, 'FoodAPP/dietDesigner.html',{'form':form}) 
 
 @login_required
 def addIngredient(request,dayOffset):

@@ -12,8 +12,8 @@ class SessionTimeoutMiddleware:
             last_activity = request.session.get('last_activity', None)
             if last_activity:
                 last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S')
-                if (datetime.datetime.now() - last_activity).seconds > settings.SEC2LOGOUT: # timeout duration
-                    logout(request)
+                # if (datetime.datetime.now() - last_activity).seconds > settings.SEC2LOGOUT: # timeout duration
+                #     logout(request)
             if request.path != '/ping/': # to avoid updating last_activity with ping requests
                 request.session['last_activity'] = current_time
         response = self.get_response(request)

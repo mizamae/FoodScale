@@ -5,7 +5,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import uuid
+import json
+import os
 from .managers import CustomUserManager
+from pywebpush import webpush
+from django.contrib.staticfiles import finders
 
 CONFIRMATION_URL = "https://"+settings.PAGE_DNS+"/userapp/firstlogin/"
 
@@ -21,6 +25,8 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+
+    is_subscribed = models.BooleanField(default=False)
 
     data = models.JSONField(blank=True,null=True)
     
@@ -40,6 +46,17 @@ class User(AbstractBaseUser):
     def save(self,*args,**kwargs):
         super().save(*args,**kwargs)
     
+    def sendNotification(self,title,body,redirect="https://" + settings.PAGE_DNS+"/"):
+        if self.is_subscribed:
+            webpush(subscription_info=self.subscription_info,
+                data=json.dumps({'title':title,'body':body,
+                            'badge':finders.find('site/logos/CompanyLogoEmail.png'),
+                            'icon':finders.find('site/ico/favicon.ico'),
+                            'redirect':redirect
+                            }),
+                vapid_private_key=settings.PUSH_NOTIFICATIONS_SETTINGS["WP_PRIVATE_KEY"],
+                vapid_claims=settings.PUSH_NOTIFICATIONS_SETTINGS["WP_CLAIMS"])
+
     def registerWeight(self,value,dateTime=None):
         if dateTime is None:
             dateTime = timezone.now().replace(microsecond=0)
@@ -50,6 +67,26 @@ class User(AbstractBaseUser):
             self.data={'weight':[]}
         self.data['weight'].append(register)
         self.save(update_fields=['data',])
+
+    @property
+    def subscription_info(self,):
+        return self.data['subscription_info']
+    
+    @property
+    def notifications(self,):
+        return self.is_subscribed
+    
+    def activateNotifications(self, info):
+        self.is_subscribed = True
+        if self.data is None:
+            self.data={}
+        self.data['subscription_info']=info   
+        self.save(update_fields=['is_subscribed','data'])
+
+    def deactivateNotifications(self,):
+        self.is_subscribed = False
+        self.data['subscription_info']=None   
+        self.save(update_fields=['is_subscribed','data'])
 
     @property
     def confirmationLink(self):

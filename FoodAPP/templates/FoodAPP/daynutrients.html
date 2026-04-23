@@ -3,5 +3,6 @@
 <tr id="nutrient-{{ pos.pk }}" class="pos-row">
   <td>{{ pos.name }}</td>
   <td>{{ pos.quant }}&nbsp;{{ pos.unit }} {% if pos.fraction %} &nbsp;({{ pos.fraction }}&nbsp;%) {% endif %}</td>
+  <td>{% if pos.target %} {{ pos.target }}&nbsp;{{ pos.unit }} {% endif %}</td>
 </tr>
 {% endfor %}
