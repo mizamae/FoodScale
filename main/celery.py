@@ -49,11 +49,19 @@ def config_loggers(*args, **kwargs):
     
 @app.task(name='main Hourly task',ignore_result=True)
 def hourlyTasks(arg):
+    from django.utils import timezone
     from django.contrib.auth import get_user_model
-    User=get_user_model()
-    users = User.objects.all()
-    for user in users:
-        user.sendNotification(title="This is title",body="Hola hola!!!",redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+    now = timezone.localtime(timezone.now())
+    if now.hour == 8:
+        User=get_user_model()
+        users = User.objects.all()
+        for user in users:
+            user.sendBreakfastNotification()
+    elif now.hour == 13:
+        User=get_user_model()
+        users = User.objects.all()
+        for user in users:
+            user.sendLunchNotification()
 
 @app.task(name='main Daily task',ignore_result=True)
 def dailyTasks():

@@ -62,10 +62,14 @@ class User(AbstractBaseUser):
                 vapid_claims=settings.PUSH_NOTIFICATIONS_SETTINGS["WP_CLAIMS"])
 
     def sendBreakfastNotification(self,):
-        self.sendNotification(title=_("Recuerda registrar tu desayuno"),body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu desayuno"),redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+        self.sendNotification(title=_("Recuerda registrar tu desayuno"),
+                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu desayuno"),
+                              redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
 
     def sendLunchNotification(self,):
-        self.sendNotification(title=_("Recuerda registrar tu comida"),body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu comida"),redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+        self.sendNotification(title=_("Recuerda registrar tu comida"),
+                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu comida"),
+                              redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
 
 
     def registerWeight(self,value,dateTime=None):
