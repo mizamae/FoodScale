@@ -6,10 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import uuid
 import json
+from django.conf import settings
 import os
 from .managers import CustomUserManager
 from pywebpush import webpush
 from django.contrib.staticfiles import finders
+
 
 CONFIRMATION_URL = "https://"+settings.PAGE_DNS+"/userapp/firstlogin/"
 
@@ -30,6 +32,8 @@ class User(AbstractBaseUser):
 
     data = models.JSONField(blank=True,null=True)
     
+    timezone = models.CharField(max_length=255, default = settings.TIME_ZONE )
+
     groups = models.ManyToManyField(Group)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -56,6 +60,13 @@ class User(AbstractBaseUser):
                             }),
                 vapid_private_key=settings.PUSH_NOTIFICATIONS_SETTINGS["WP_PRIVATE_KEY"],
                 vapid_claims=settings.PUSH_NOTIFICATIONS_SETTINGS["WP_CLAIMS"])
+
+    def sendBreakfastNotification(self,):
+        self.sendNotification(title=_("Recuerda registrar tu desayuno"),body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu desayuno"),redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+
+    def sendLunchNotification(self,):
+        self.sendNotification(title=_("Recuerda registrar tu comida"),body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu comida"),redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+
 
     def registerWeight(self,value,dateTime=None):
         if dateTime is None:

@@ -9,6 +9,8 @@ from django.utils import timezone
 
 from .models import User
 
+from timezones.forms import TimeZoneField
+
 FORMS_LABEL_CLASS='col'
 FORMS_FIELD_CLASS='col'
 
@@ -65,11 +67,14 @@ class userSignUpForm(forms.ModelForm):
 
 class userForm(forms.ModelForm):
 
+    timezone = TimeZoneField(label=_("Franja horaria"))
     class Meta:
         model = User
-        fields = ['first_name', 'last_name','email']
+        fields = ['first_name', 'last_name','email','timezone']
         widgets = {
         }
+    class Media:
+        js = ('userform.js',)
 
     def __init__(self, *args, **kwargs):
         super(userForm, self).__init__(*args, **kwargs)
@@ -100,6 +105,7 @@ class userForm(forms.ModelForm):
                                 Field('first_name',type=''),
                                 Field('last_name',type=''),
                                 Field('email',type=''),
+                                Field('timezone',type=''),
                                 )
             
         self.helper.layout.append(buttons)

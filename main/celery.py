@@ -26,7 +26,7 @@ app.autodiscover_tasks()
 def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every hour.
     sender.add_periodic_task(
-                                crontab(hour='*',minute='*'), 
+                                crontab(hour='*',minute='0'), 
                                 hourlyTasks.s('hello'), name='main hourly')
 
     # Executes everyday morning at 0:00 a.m.
