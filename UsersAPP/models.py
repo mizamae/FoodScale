@@ -53,7 +53,7 @@ class User(AbstractBaseUser):
     def sendNotification(self,title,body,redirect="https://" + settings.PAGE_DNS+"/"):
         if self.is_subscribed:
             webpush(subscription_info=self.subscription_info,
-                data=json.dumps({'title':title,'body':body,
+                data=json.dumps({'title':str(title),'body':str(body),
                             'badge':finders.find('site/logos/CompanyLogoEmail.png'),
                             'icon':finders.find('site/ico/favicon.ico'),
                             'redirect':redirect
