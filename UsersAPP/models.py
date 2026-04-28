@@ -63,15 +63,19 @@ class User(AbstractBaseUser):
 
     def sendBreakfastNotification(self,):
         self.sendNotification(title=_("Recuerda registrar tu desayuno"),
-                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu desayuno"),
+                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu desayuno de hoy"),
                               redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
 
     def sendLunchNotification(self,):
         self.sendNotification(title=_("Recuerda registrar tu comida"),
-                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu comida"),
+                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu comida de hoy"),
                               redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
 
-
+    def sendDinnerNotification(self,):
+        self.sendNotification(title=_("Recuerda registrar tu cena"),
+                              body=_("Ey! esto solo es un recordatorio de que tienes que registrar tu cena de hoy"),
+                              redirect="https://" + settings.PAGE_DNS+"/foodapp/calculator/0")
+        
     def registerWeight(self,value,dateTime=None):
         if dateTime is None:
             dateTime = timezone.now().replace(microsecond=0)

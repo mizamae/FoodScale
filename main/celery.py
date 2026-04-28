@@ -62,6 +62,11 @@ def hourlyTasks(arg):
         users = User.objects.all()
         for user in users:
             user.sendLunchNotification()
+    elif now.hour == 20:
+        User=get_user_model()
+        users = User.objects.all()
+        for user in users:
+            user.sendDinnerNotification()
 
 @app.task(name='main Daily task',ignore_result=True)
 def dailyTasks():
