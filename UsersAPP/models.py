@@ -84,6 +84,8 @@ class User(AbstractBaseUser):
         register = {'timestamp':dateTime.isoformat(),'value':value}
         if self.data is None:
             self.data={'weight':[]}
+        if self.data.get('weight',None) is None:
+            self.data['weight']=[]
         self.data['weight'].append(register)
         self.save(update_fields=['data',])
 
