@@ -31,7 +31,7 @@ La aplicación está desarrollada sobre el framework **Django 5.2**, utilizando 
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone https://github.com
+    git clone https://github.com/mizamae/FoodScale
     cd FoodScale
     ```
 
